@@ -17,12 +17,17 @@
     --wine: #4a0e2e;
   }
 
- html, body {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
-}
-
+  html, body {
+    font-family: 'Cormorant Garamond', serif;
+    background: var(--wine);
+    color: var(--cream);
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
 
   /* ── FLOATING HEARTS BACKGROUND ── */
   .bg-hearts {
@@ -107,9 +112,7 @@
     position: relative;
     width: 100%;
     max-width: 360px;
-    height: 220px;
-    overflow: hidden;
-
+    min-height: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -153,36 +156,42 @@
   }
 
   .btn-no {
-  background: rgba(253, 246, 240, 0.08);
-  color: rgba(253, 246, 240, 0.6);
-  border: 1px solid rgba(253, 246, 240, 0.15);
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem;
-  padding: 0.75rem 1.8rem;
-  border-radius: 60px;
-  cursor: pointer;
-  position: absolute; /* ← changed */
-  white-space: nowrap;
-  z-index: 5;
-  transition: left 0.3s ease, top 0.3s ease, transform 0.2s ease;
-}
-
+    background: rgba(253, 246, 240, 0.08);
+    color: rgba(253, 246, 240, 0.6);
+    border: 1px solid rgba(253, 246, 240, 0.15);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: 60px;
+    cursor: pointer;
+    position: fixed;
+    white-space: nowrap;
+    z-index: 5;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* start centered below Yes button */
+    left: 50%;
+    top: 70%;
+    transform: translate(-50%, -50%);
+  }
 
   .btn-no.jumping {
     animation: wiggle 0.3s ease;
   }
 
   @keyframes wiggle {
-    0%   { transform: scale(1) rotate(0deg); }
-    25%  { transform: scale(0.85) rotate(-8deg); }
-    50%  { transform: scale(1.1) rotate(5deg); }
-    75%  { transform: scale(0.95) rotate(-3deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    0%   { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    25%  { transform: translate(-50%, -50%) scale(0.85) rotate(-8deg); }
+    50%  { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+    75%  { transform: translate(-50%, -50%) scale(0.95) rotate(-3deg); }
+    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
   }
 
   /* ── HEART EXPLOSION ── */
   .explosion-container {
-    position: ;
+    position: fixed;
     inset: 0;
     z-index: 100;
     pointer-events: none;
@@ -220,6 +229,7 @@
   .yes-screen.active {
     display: flex;
     animation: fadeIn 0.8s ease-out;
+    overflow-y: auto;
   }
 
   @keyframes fadeIn {
@@ -433,29 +443,33 @@
 
   // ── RUNAWAY "NO" BUTTON ── Auto-moves every 2 seconds
   const btnNo = document.getElementById('btnNo');
-  const buttonsArea = document.getElementById('buttonsArea');
   let noMoveInterval = null;
   let mainScreenActive = true;
 
- function moveNoButton() {
-  const containerRect = buttonsArea.getBoundingClientRect();
-  const btnRect = btnNo.getBoundingClientRect();
+  function moveNoButton() {
+    // Safe zone: 10%-80% of viewport width and 15%-75% of viewport height
+    // Using translate relative to the center anchor (left:50%, top:70%)
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
 
-  const maxX = containerRect.width - btnRect.width;
-  const maxY = containerRect.height - btnRect.height;
+    // Pick a random target point within safe area
+    const targetX = vw * (0.12 + Math.random() * 0.66);  // 12% to 78%
+    const targetY = vh * (0.12 + Math.random() * 0.63);   // 12% to 75%
 
-  const newX = Math.random() * Math.max(maxX, 0);
-  const newY = Math.random() * Math.max(maxY, 0);
+    // Convert to translate offset from center anchor (50%, 70%)
+    const offsetX = targetX - (vw * 0.5);
+    const offsetY = targetY - (vh * 0.7);
 
-  btnNo.style.left = newX + 'px';
-  btnNo.style.top = newY + 'px';
+    btnNo.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    btnNo.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
 
-  btnNo.classList.remove('jumping');
-  void btnNo.offsetWidth;
-  btnNo.classList.add('jumping');
-}
-
-
+    // Wiggle animation after landing
+    setTimeout(() => {
+      btnNo.classList.remove('jumping');
+      void btnNo.offsetWidth;
+      btnNo.classList.add('jumping');
+    }, 500);
+  }
 
   // Start auto-moving after a brief delay
   setTimeout(() => {
@@ -472,7 +486,6 @@
     wrongEl.classList.remove('show');
     void wrongEl.offsetWidth;
     wrongEl.classList.add('show');
-    // Immediately jump away
     moveNoButton();
   });
 
