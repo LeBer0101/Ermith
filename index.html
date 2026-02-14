@@ -156,11 +156,12 @@
   }
 
   .btn-no {
-    background: rgba(253, 246, 240, 0.08);
-    color: rgba(253, 246, 240, 0.6);
-    border: 1px solid rgba(253, 246, 240, 0.15);
+    background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+    color: var(--cream);
+    border: 2px solid var(--gold);
     font-family: 'Playfair Display', serif;
     font-size: 0.95rem;
+    font-weight: 700;
     padding: 0.75rem 1.8rem;
     border-radius: 60px;
     cursor: pointer;
@@ -170,8 +171,9 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: none;
     will-change: transform;
+    letter-spacing: 0.05em;
+    box-shadow: 0 6px 30px rgba(194, 24, 91, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* start centered below Yes button */
     left: 50%;
     top: 70%;
     transform: translate(-50%, -50%);
