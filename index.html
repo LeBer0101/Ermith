@@ -441,28 +441,31 @@
   let mainScreenActive = true;
 
   function moveNoButton() {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const btnW = 160;
-    const btnH = 50;
-    const pad = 30;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
 
-    const minX = pad;
-    const minY = pad;
-    const maxX = vw - btnW - pad;
-    const maxY = vh - btnH - pad;
+  // Get REAL button size (not hardcoded)
+  const rect = btnNo.getBoundingClientRect();
+  const btnW = rect.width;
+  const btnH = rect.height;
 
-    const newX = minX + Math.random() * Math.max(maxX - minX, 0);
-    const newY = minY + Math.random() * Math.max(maxY - minY, 0);
+  const pad = 20; // smaller padding for mobile safety
 
-    btnNo.style.left = newX + 'px';
-    btnNo.style.top = newY + 'px';
+  const maxX = vw - btnW - pad;
+  const maxY = vh - btnH - pad;
 
-    // Wiggle animation on each jump
-    btnNo.classList.remove('jumping');
-    void btnNo.offsetWidth;
-    btnNo.classList.add('jumping');
-  }
+  const newX = Math.random() * Math.max(maxX, 0);
+  const newY = Math.random() * Math.max(maxY, 0);
+
+  btnNo.style.left = newX + 'px';
+  btnNo.style.top = newY + 'px';
+
+  // Wiggle animation
+  btnNo.classList.remove('jumping');
+  void btnNo.offsetWidth;
+  btnNo.classList.add('jumping');
+}
+
 
   // Start auto-moving after a brief delay
   setTimeout(() => {
